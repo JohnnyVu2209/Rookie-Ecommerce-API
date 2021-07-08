@@ -7,13 +7,11 @@ import com.musical.instrument.ecommerce.Entity.Product;
 public interface ProductService {
 	public List<Product> ListProduct();
 	
-	public List<Product> ListProduct(int cateId);
-	
 	public Product FindProduct(int proId);
 	
-	public Product CreateProduct(Product procduct);
+	public Product CreateProduct(Product product);
 	
-	public Product EditProduct(Product product);
+	public Product UpdateProduct(int productId,Product product);
 	
-	public void DeleteProduct(int procduct);
+	public void DeleteProduct(int product);
 }
