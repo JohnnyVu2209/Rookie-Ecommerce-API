@@ -3,10 +3,14 @@ package com.musical.instrument.ecommerce.Entity;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.IdClass;
 import javax.persistence.Table;
+
+import com.musical.instrument.ecommerce.composite.ProductRatingID;
 
 @Entity
 @Table (name = "product_rate")
+@IdClass(ProductRatingID.class)
 public class Product_rate {
 
 	@Id
