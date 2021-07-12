@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -15,10 +16,14 @@ public class Category {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id_category", nullable = false)
 	private int id;
-	
-	@Column (name = "category_name")
-	private String Category_name;
+
+	@Column(name = "category_name")
+	private String category_name;
+
+	@OneToMany(mappedBy = "category")
+	private List<Product> products;
 
 	public int getId() {
 		return id;
@@ -29,12 +34,19 @@ public class Category {
 	}
 
 	public String getCategory_name() {
-		return Category_name;
+		return category_name;
 	}
 
 	public void setCategory_name(String category_name) {
-		Category_name = category_name;
+		category_name = category_name;
 	}
-	
-	
+
+	public List<Product> getProducts() {
+		return products;
+	}
+
+	public void setProducts(List<Product> products) {
+		this.products = products;
+	}
+
 }

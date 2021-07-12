@@ -6,6 +6,5 @@ import org.springframework.stereotype.Repository;
 import com.musical.instrument.ecommerce.Entity.Brand;
 
 @Repository
-public interface BrandRepository extends JpaRepository<Brand, Integer>{
-
+public interface BrandRepository extends JpaRepository<Brand, Integer> {
 }

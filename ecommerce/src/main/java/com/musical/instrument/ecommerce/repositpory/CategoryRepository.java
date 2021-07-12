@@ -6,6 +6,5 @@ import org.springframework.stereotype.Repository;
 import com.musical.instrument.ecommerce.Entity.Category;
 
 @Repository
-public interface CategoryRepository extends JpaRepository<Category, Integer>{
-
+public interface CategoryRepository extends JpaRepository<Category, Integer> {
 }
