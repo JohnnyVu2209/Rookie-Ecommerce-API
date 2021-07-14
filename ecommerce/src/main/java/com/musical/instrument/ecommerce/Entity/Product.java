@@ -5,6 +5,7 @@ import java.util.Date;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -13,8 +14,17 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter
+@Setter
+@NoArgsConstructor
 @Entity
 @Table(name = "product", schema = "public")
 public class Product {
@@ -24,15 +34,18 @@ public class Product {
 	@Column(name = "id_product", nullable = false)
 	private int id;
 
+	@NotBlank(message = "Vui lòng nhập tên sản phẩm")
 	@Column(name = "productname")
 	private String product_name;
 
 	@Column(name = "description")
 	private String description;
 
+	@Min(value = 0, message = "số lượng hàng không được nhỏ hơn 0")
 	@Column(name = "quantity")
 	private int quantity;
 
+	@Min(value = 1000, message = "giá trị của sản phẩm không được nhỏ hơn 1000đ")
 	@Column(name = "price")
 	private int price;
 
@@ -44,18 +57,23 @@ public class Product {
 	@Column(name = "updatedate")
 	private Date update_date;
 
-	@ManyToOne (cascade = CascadeType.ALL)
-	@JoinColumn(name = "id_category", nullable = false)
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_category")
 	private Category category;
 
-	@ManyToOne (cascade = CascadeType.ALL)
-	@JoinColumn(name = "id_brand", nullable = false)
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_brand")
 	private Brand brand;
 
 	@Column(name = "img")
 	private String link_img;
 
+	@Column(name = "isdeleted")
+	private Boolean isDeleted;
+	
 	public Product() {
+		this.create_date = new Date();
+		this.isDeleted = false;
 	}
 
 	public Product(int id, String product_name, String description, int quantity, int price, Date create_date,
@@ -65,7 +83,8 @@ public class Product {
 		this.description = description;
 		this.quantity = quantity;
 		this.price = price;
-		this.create_date = create_date;
+		this.create_date = new Date();
+		this.isDeleted = false;
 		this.update_date = update_date;
 		this.category = category;
 		this.brand = brand;
@@ -152,4 +171,13 @@ public class Product {
 		this.link_img = link_img;
 	}
 
+	public Boolean getIsDeleted() {
+		return isDeleted;
+	}
+
+	public void setIsDeleted(Boolean isDeleted) {
+		this.isDeleted = isDeleted;
+	}
+
+	
 }

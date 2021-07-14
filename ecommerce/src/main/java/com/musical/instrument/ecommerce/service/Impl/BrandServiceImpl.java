@@ -13,8 +13,8 @@ import com.musical.instrument.ecommerce.Entity.Category;
 import com.musical.instrument.ecommerce.convert.BrandConvert;
 import com.musical.instrument.ecommerce.dto.BrandDTO;
 import com.musical.instrument.ecommerce.dto.CategoryDTO;
-import com.musical.instrument.ecommerce.dto.ProductDTO;
-import com.musical.instrument.ecommerce.exception.ApiException;
+import com.musical.instrument.ecommerce.dto.Product.ProductDTO;
+import com.musical.instrument.ecommerce.exception.DataNotFoundException;
 import com.musical.instrument.ecommerce.repositpory.BrandRepository;
 import com.musical.instrument.ecommerce.service.BrandService;
 
@@ -40,7 +40,7 @@ public class BrandServiceImpl implements BrandService {
 	@Override
 	public BrandDTO FindBrand(int brand_id) {
 		// TODO Auto-generated method stub
-		Brand brand = brandRepository.findById(brand_id).orElseThrow(() -> new ApiException("Brand not found"));
+		Brand brand = brandRepository.findById(brand_id).orElseThrow(() -> new DataNotFoundException("Brand not found"));
 		return brandConvert.ToDto(brand);
 	}
 

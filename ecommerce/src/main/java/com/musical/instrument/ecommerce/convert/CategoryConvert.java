@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 
 import com.musical.instrument.ecommerce.Entity.Category;
 import com.musical.instrument.ecommerce.dto.CategoryDTO;
-import com.musical.instrument.ecommerce.dto.ProductDTO;
+import com.musical.instrument.ecommerce.dto.Product.ProductDTO;
 
 @Component
 public class CategoryConvert {

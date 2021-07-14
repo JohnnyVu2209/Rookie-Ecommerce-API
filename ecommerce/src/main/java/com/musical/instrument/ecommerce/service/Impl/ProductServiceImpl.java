@@ -1,8 +1,10 @@
 package com.musical.instrument.ecommerce.service.Impl;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
@@ -16,8 +18,12 @@ import com.musical.instrument.ecommerce.Entity.Product;
 import com.musical.instrument.ecommerce.convert.ProductConvert;
 import com.musical.instrument.ecommerce.dto.BrandDTO;
 import com.musical.instrument.ecommerce.dto.CategoryDTO;
-import com.musical.instrument.ecommerce.dto.ProductDTO;
-import com.musical.instrument.ecommerce.exception.ApiException;
+import com.musical.instrument.ecommerce.dto.Product.ProductDTO;
+import com.musical.instrument.ecommerce.dto.Product.UpdateProductDTO;
+import com.musical.instrument.ecommerce.exception.CreateDataFailException;
+import com.musical.instrument.ecommerce.exception.DataNotFoundException;
+import com.musical.instrument.ecommerce.exception.DeleteDataFailException;
+import com.musical.instrument.ecommerce.exception.UpdateDataFailException;
 import com.musical.instrument.ecommerce.repositpory.BrandRepository;
 import com.musical.instrument.ecommerce.repositpory.CategoryRepository;
 import com.musical.instrument.ecommerce.repositpory.ProductRepository;
@@ -34,7 +40,7 @@ public class ProductServiceImpl implements ProductService {
 
 	@Autowired
 	private BrandRepository brandRepository;
-	
+
 	@Autowired
 	private ProductConvert convert;
 
@@ -52,60 +58,52 @@ public class ProductServiceImpl implements ProductService {
 	@Override
 	public List<ProductDTO> FindProductByCategory(int cateId) {
 		// TODO Auto-generated method stub
-		List<Product> products = new ArrayList<Product>();
-		repository.findByCategoryId(cateId).forEach(products::add);
+		List<Product> products = categoryRepository.findById(cateId).get().getProducts();
 		return products.stream().map(product -> convert.ToDto(product)).collect(Collectors.toList());
-
 	}
 
 	@Override
-	public ProductDTO FindProduct(int proId) {
+	public ProductDTO CreateProduct(Product product) throws CreateDataFailException {
 		// TODO Auto-generated method stub
-		Product product = repository.findById(proId).orElseThrow(() -> new ApiException("Product Id Not Found"));
-		return convert.ToDto(product);
-	}
-
-	@Override
-	public ProductDTO CreateProduct(ProductDTO productDto) {
-		// TODO Auto-generated method stub
-		Product product = convert.ToEntity(productDto);
-		Date date = new Date();
-		product.setCreate_date(date);
-		if (categoryRepository.findById(product.getCategory().getId()) == null) {
-			throw new ApiException("Category not exists");
-		}
-		if (brandRepository.findById(product.getBrand().getId()) == null) {
-			throw new ApiException("Brand not exists");
-		}
 		return convert.ToDto(repository.save(product));
 	}
 
 	@Override
-	public ProductDTO UpdateProduct(int productId, ProductDTO productdto) {
+	public ProductDTO UpdateProduct(int productId, UpdateProductDTO productdto) throws UpdateDataFailException {
 		// TODO Auto-generated method stub
-		Product product = convert.ToEntity(productdto);
-		return repository.findById(productId).map(prod -> {
-			prod.setProduct_name(product.getProduct_name());
-			prod.setDescription(product.getDescription());
-			prod.setPrice(product.getPrice());
-			prod.setQuantity(product.getQuantity());
-			prod.setUpdate_date(new Date());
-			if (categoryRepository.findById(product.getCategory().getId()) == null) {
-				throw new ApiException("Category not exists");
-			}
-			if (brandRepository.findById(product.getBrand().getId()) == null) {
-				throw new ApiException("Brand not exists");
-			}
-			prod.setBrand(product.getBrand());
-			prod.setCategory(product.getCategory());
-			return convert.ToDto(repository.save(prod));
-		}).orElseThrow(() -> new ApiException("Product not found"));
+		Product oldProduct = repository.findById(productId)
+				.orElseThrow(() -> new DataNotFoundException("PRODUCT_NOT_FOUND"));
+		try {
+			Product product = convert.ToEntity(productdto);
+			oldProduct.setProduct_name(product.getProduct_name());
+			oldProduct.setDescription(product.getDescription());
+			oldProduct.setPrice(product.getPrice());
+			oldProduct.setQuantity(product.getQuantity());
+			oldProduct.setUpdate_date(new Date());
+			oldProduct.setBrand(product.getBrand());
+			oldProduct.setCategory(product.getCategory());
+			convert.ToDto(repository.save(oldProduct));
+		} catch (Exception e) {
+			// TODO: handle exception
+			throw new UpdateDataFailException("PRODUCT_UPDATED_FAIL");
+		}
+		return convert.ToDto(oldProduct);
 	}
 
 	@Override
-	public void DeleteProduct(int product) {
+	public Boolean DeleteProduct(int productId) throws DeleteDataFailException {
 		// TODO Auto-generated method stub
-		repository.deleteById(product);
+		Product product = repository.findById(productId)
+				.orElseThrow(() -> new DataNotFoundException("PRODUCT_NOT_FOUND"));
+		try {
+			product.setIsDeleted(true);
+			repository.save(product);
+		} catch (Exception e) {
+			// TODO: handle exception
+			throw new DeleteDataFailException("PRODUCT_DELETED_FAIL");
+		}
+
+		return product.getIsDeleted();
 	}
 
 }

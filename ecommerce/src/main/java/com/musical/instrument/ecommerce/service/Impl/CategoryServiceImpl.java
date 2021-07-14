@@ -11,8 +11,8 @@ import org.springframework.stereotype.Service;
 import com.musical.instrument.ecommerce.Entity.Category;
 import com.musical.instrument.ecommerce.convert.CategoryConvert;
 import com.musical.instrument.ecommerce.dto.CategoryDTO;
-import com.musical.instrument.ecommerce.dto.ProductDTO;
-import com.musical.instrument.ecommerce.exception.ApiException;
+import com.musical.instrument.ecommerce.dto.Product.ProductDTO;
+import com.musical.instrument.ecommerce.exception.DataNotFoundException;
 import com.musical.instrument.ecommerce.repositpory.CategoryRepository;
 import com.musical.instrument.ecommerce.service.CategoryService;
 
@@ -38,7 +38,7 @@ public class CategoryServiceImpl implements CategoryService {
 	@Override
 	public CategoryDTO FindCatgory(int id) {
 		// TODO Auto-generated method stub
-		Category category = categoryRepository.findById(id).orElseThrow(() -> new ApiException("Category not found"));
+		Category category = categoryRepository.findById(id).orElseThrow(() -> new DataNotFoundException("Category not found"));
 		return convert.ToDto(category);
 	}
 

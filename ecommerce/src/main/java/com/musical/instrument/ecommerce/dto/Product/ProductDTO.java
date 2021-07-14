@@ -1,4 +1,4 @@
-package com.musical.instrument.ecommerce.dto;
+package com.musical.instrument.ecommerce.dto.Product;
 
 import java.util.Date;
 
@@ -9,54 +9,27 @@ import com.musical.instrument.ecommerce.Entity.Brand;
 import com.musical.instrument.ecommerce.Entity.Category;
 import com.sun.istack.Nullable;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class ProductDTO {
 
-	private int id;
-
-	@NotBlank(message = "Vui lòng nhập tên sản phẩm")
 	private String product_name;
-
 	private String description;
-
-	@Min(value = 0, message = "số lượng hàng không được nhỏ hơn 0")
 	private int quantity;
-
-	@Min(value = 1000, message = "giá trị của sản phẩm không được nhỏ hơn 1000đ")
 	private int price;
-
-	private CategoryDTO categoryDTO;
-
-	private BrandDTO brandDTO;
-
 	private String link_img;
-
-	@Nullable
 	private Date create_date;
-
-	@Nullable
 	private Date update_date;
-
-	public ProductDTO() {
-	}
-
-	public ProductDTO(int id, @NotBlank(message = "Vui lòng nhập tên sản phẩm") String product_name, String description,
-			@Min(value = 0, message = "số lượng hàng không được nhỏ hơn 0") int quantity,
-			@Min(value = 1000, message = "giá trị của sản phẩm không được nhỏ hơn 1000đ") int price, String link_img) {
-		this.id = id;
-		this.product_name = product_name;
-		this.description = description;
-		this.quantity = quantity;
-		this.price = price;
-		this.link_img = link_img;
-	}
-
-	public int getId() {
-		return id;
-	}
-
-	public void setId(int id) {
-		this.id = id;
-	}
+	private int id_category;
+	private int id_brand;
 
 	public String getProduct_name() {
 		return product_name;
@@ -98,22 +71,6 @@ public class ProductDTO {
 		this.link_img = link_img;
 	}
 
-	public CategoryDTO getCategoryDTO() {
-		return categoryDTO;
-	}
-
-	public void setCategoryDTO(CategoryDTO categoryDTO) {
-		this.categoryDTO = categoryDTO;
-	}
-
-	public BrandDTO getBrandDTO() {
-		return brandDTO;
-	}
-
-	public void setBrandDTO(BrandDTO brandDTO) {
-		this.brandDTO = brandDTO;
-	}
-
 	public Date getCreate_date() {
 		return create_date;
 	}
@@ -128,6 +85,22 @@ public class ProductDTO {
 
 	public void setUpdate_date(Date update_date) {
 		this.update_date = update_date;
+	}
+
+	public int getId_category() {
+		return id_category;
+	}
+
+	public void setId_category(int id_category) {
+		this.id_category = id_category;
+	}
+
+	public int getId_brand() {
+		return id_brand;
+	}
+
+	public void setId_brand(int id_brand) {
+		this.id_brand = id_brand;
 	}
 
 }
