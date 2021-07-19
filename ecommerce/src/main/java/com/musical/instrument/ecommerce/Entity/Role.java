@@ -1,42 +1,31 @@
 package com.musical.instrument.ecommerce.Entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+import javax.persistence.*;
+import java.util.List;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "role")
 public class Role {
 	
 	@Id
+	@Column(name = "id_role")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int id;
-	
-	@Column(name= "role")
-	private String role;
+	private Long id;
 
-	public Role() {
-		
-	}
-	public Role(int id, String role) {
-		this.id = id;
-		this.role = role;
-	}
-	public int getId() {
-		return id;
-	}
-	public void setId(int id) {
-		this.id = id;
-	}
-	public String getRole() {
-		return role;
-	}
-	public void setRole(String role) {
-		this.role = role;
-	}
-	
-	
+	@Enumerated(EnumType.STRING)
+	@Column(name= "role",length = 20)
+	private ERole role;
+
+	@ManyToMany(mappedBy = "roles")
+	private List<Account> accounts;
+
 }

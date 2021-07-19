@@ -1,18 +1,11 @@
 package com.musical.instrument.ecommerce.Entity;
 
-import java.util.List;
+import java.util.*;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -20,55 +13,40 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "category")
 public class Category {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "id_category", nullable = false)
-	private int id;
+	private Long id;
 
 	@NotBlank(message = "Vui lòng nhập tên danh mục")
 	@Column(name = "category_name")
-	private String categoryName;
+	private String name;
 
-	@OneToMany(fetch = FetchType.LAZY,mappedBy = "category",cascade = CascadeType.ALL)
+	@Column(name ="create_date")
+	private Date creatDate;
+
+	@Column(name ="update_date")
+	private Date updateDate;
+
+	@Column(name ="isdeleted")
+	private Boolean isDeleted;
+
+	@ManyToOne
+	@JoinColumn(name = "category_parent")
+	private Category parent;
+
+	@OneToMany(fetch = FetchType.LAZY,mappedBy = "parent")
+	private List<Category> subCategories = new ArrayList<>();
+
+	@OneToMany(fetch = FetchType.LAZY,mappedBy = "category")
 	private List<Product> products;
 
-	
-	
-	public Category() {
+	public Category(){
+		this.setCreatDate(new Date());
+		this.setIsDeleted(false);
 	}
-
-	public Category(int id, String category_name) {
-		super();
-		this.id = id;
-		this.categoryName = category_name;
-	}
-
-	public int getId() {
-		return id;
-	}
-
-	public void setId(int id) {
-		this.id = id;
-	}
-
-	public String getCategory_name() {
-		return categoryName;
-	}
-
-	public void setCategory_name(String category_name) {
-		this.categoryName = category_name;
-	}
-
-	public List<Product> getProducts() {
-		return products;
-	}
-
-	public void setProducts(List<Product> products) {
-		this.products = products;
-	}
-
 }

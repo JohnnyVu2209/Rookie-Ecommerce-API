@@ -6,8 +6,7 @@ import org.springframework.expression.ParseException;
 import org.springframework.stereotype.Component;
 
 import com.musical.instrument.ecommerce.Entity.Brand;
-import com.musical.instrument.ecommerce.dto.BrandDTO;
-
+import com.musical.instrument.ecommerce.dto.request.BrandDTO;
 @Component
 public class BrandConvert {
 	@Autowired

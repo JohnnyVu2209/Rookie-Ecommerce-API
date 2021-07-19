@@ -1,44 +1,40 @@
 package com.musical.instrument.ecommerce.service.Impl;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.expression.ParseException;
-import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 
 import com.musical.instrument.ecommerce.Entity.Brand;
-import com.musical.instrument.ecommerce.Entity.Category;
 import com.musical.instrument.ecommerce.convert.BrandConvert;
-import com.musical.instrument.ecommerce.dto.BrandDTO;
-import com.musical.instrument.ecommerce.dto.CategoryDTO;
-import com.musical.instrument.ecommerce.dto.Product.ProductDTO;
-import com.musical.instrument.ecommerce.exception.DataNotFoundException;
-import com.musical.instrument.ecommerce.repositpory.BrandRepository;
-import com.musical.instrument.ecommerce.service.BrandService;
+import com.musical.instrument.ecommerce.dto.request.BrandDTO;
+import com.musical.instrument.ecommerce.exception.*;
+import com.musical.instrument.ecommerce.repositpory.*;
+import com.musical.instrument.ecommerce.service.*;
 
-@Service
+
 public class BrandServiceImpl implements BrandService {
 
 	@Autowired
 	private BrandRepository brandRepository;
 
+	@Autowired
 	private BrandConvert brandConvert;
 
-	public BrandServiceImpl(BrandRepository brandRepository) {
-		this.brandRepository = brandRepository;
+	public BrandServiceImpl(BrandRepository repository){
+		 brandRepository = repository;
 	}
 
-
 	@Override
-	public List<BrandDTO> brandList() {
+	public Page<BrandDTO> brandList() {
 		// TODO Auto-generated method stub
-		return brandRepository.findAll().stream().map(category -> brandConvert.ToDto(category)).collect(Collectors.toList());
+		PageRequest pageRequest= PageRequest.of(0, 2, Sort.by("name").descending());
+		Page<Brand> brandList = brandRepository.findAll(pageRequest);
+		return brandList.map(brand -> brandConvert.ToDto(brand));
 	}
 
 	@Override
-	public BrandDTO FindBrand(int brand_id) {
+	public BrandDTO FindBrand(Long brand_id) {
 		// TODO Auto-generated method stub
 		Brand brand = brandRepository.findById(brand_id).orElseThrow(() -> new DataNotFoundException("Brand not found"));
 		return brandConvert.ToDto(brand);

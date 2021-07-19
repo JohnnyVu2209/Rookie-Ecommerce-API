@@ -1,121 +1,78 @@
 package com.musical.instrument.ecommerce.Entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.springframework.lang.Nullable;
 
+import javax.persistence.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import java.util.*;
+
+@Getter
+@Setter
+@NoArgsConstructor
 @Entity
-@Table (name= "account")
+@Table(name = "account",uniqueConstraints = {
+        @UniqueConstraint(columnNames = "username"),
+        @UniqueConstraint(columnNames = "email") })
 public class Account {
-	
-	@Id
-	@Column(name = "username")
-	private String username;
-	
-	@Column(name = "password")
-	private String password;
-	
-	@Column (name = "full_name")
-	private String full_name;
-	
-	@Column (name = "sex")
-	private Boolean sex;
-	
-	@Column(name = "phone")
-	private String phone;
-	
-	@Column(name = "address")
-	private String address;
-	
-	@Column(name = "roleid")
-	private int role_id;
 
-	
-	public Account() {
-	}
+    @Id
+    @Column(name = "id_account")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
+    @NotBlank
+    @Size(max = 20)
+    @Column(name = "username")
+    private String username;
 
-	public Account(String username, String password, String full_name, Boolean sex, String phone, String address,
-			int role_id) {
-		this.username = username;
-		this.password = password;
-		this.full_name = full_name;
-		this.sex = sex;
-		this.phone = phone;
-		this.address = address;
-		this.role_id = role_id;
-	}
+    @NotBlank
+    @Size(max = 120)
+    @Column(name = "password")
+    private String password;
 
+    @Column(name = "full_name")
+    private String full_name;
 
-	public String getUsername() {
-		return username;
-	}
+    @Column(name = "sex")
+    private Boolean sex;
 
+    @Column(name = "phone")
+    private String phone;
 
-	public void setUsername(String username) {
-		this.username = username;
-	}
+    @Email
+    @Size(max = 50)
+    @Column(name = "email")
+    private String email;
 
+    @Temporal(TemporalType.DATE)
+    @Column(name = "create_date")
+    private Date createDate;
 
-	public String getPassword() {
-		return password;
-	}
+    @Temporal(TemporalType.DATE)
+    @Column(name = "update_date")
+    private Date updateDate;
 
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "account")
+    @PrimaryKeyJoinColumn
+    private Cart cart;
 
-	public void setPassword(String password) {
-		this.password = password;
-	}
+    @ManyToMany
+    @JoinTable(
+            name = "account_role",
+            joinColumns = @JoinColumn(name = "id_account"),
+            inverseJoinColumns = @JoinColumn(name = "id_role"))
+    private Set<Role> roles = new HashSet<>();
 
-
-	public String getFull_name() {
-		return full_name;
-	}
-
-
-	public void setFull_name(String full_name) {
-		this.full_name = full_name;
-	}
-
-
-	public Boolean getSex() {
-		return sex;
-	}
-
-
-	public void setSex(Boolean sex) {
-		this.sex = sex;
-	}
-
-
-	public String getPhone() {
-		return phone;
-	}
-
-
-	public void setPhone(String phone) {
-		this.phone = phone;
-	}
-
-
-	public String getAddress() {
-		return address;
-	}
-
-
-	public void setAddress(String address) {
-		this.address = address;
-	}
-
-
-	public int getRole_id() {
-		return role_id;
-	}
-
-
-	public void setRole_id(int role_id) {
-		this.role_id = role_id;
-	}
-	
-	
+    public Account(String username, String password, String email) {
+        this.username = username;
+        this.password = password;
+        this.email = email;
+    }
 }

@@ -6,8 +6,7 @@ import org.springframework.expression.ParseException;
 import org.springframework.stereotype.Component;
 
 import com.musical.instrument.ecommerce.Entity.Category;
-import com.musical.instrument.ecommerce.dto.CategoryDTO;
-import com.musical.instrument.ecommerce.dto.Product.ProductDTO;
+import com.musical.instrument.ecommerce.dto.request.CategoryDTO;
 
 @Component
 public class CategoryConvert {

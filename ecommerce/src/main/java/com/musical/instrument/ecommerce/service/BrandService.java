@@ -1,15 +1,14 @@
 package com.musical.instrument.ecommerce.service;
 
-import java.util.List;
-
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
-import com.musical.instrument.ecommerce.Entity.Brand;
-import com.musical.instrument.ecommerce.dto.BrandDTO;
+import com.musical.instrument.ecommerce.dto.request.BrandDTO;
 
+@Service
 public interface BrandService {
-	public List<BrandDTO> brandList();
+	public Page<BrandDTO> brandList();
 
-	public BrandDTO FindBrand(int brand_id);
+	public BrandDTO FindBrand(Long brand_id);
 
 }

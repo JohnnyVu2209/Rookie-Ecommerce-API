@@ -16,8 +16,4 @@ public class ErrorDetails {
 	private LocalDateTime timestamp;
 	private String message;
 	private String description;
-	
-	public ErrorDetails(LocalDateTime now, String message2, String description2) {
-		// TODO Auto-generated constructor stub
-	}
 }
