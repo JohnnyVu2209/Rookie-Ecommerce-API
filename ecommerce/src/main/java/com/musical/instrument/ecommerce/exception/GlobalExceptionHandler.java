@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.musical.instrument.ecommerce.dto.response.ResponseDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -26,9 +27,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
 	@ExceptionHandler(CreateDataFailException.class)
 	public ResponseEntity<?> createDataFailException(CreateDataFailException ex, WebRequest request) {
+		ResponseDTO responseDTO = new ResponseDTO();
 		ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(), ex.getMessage(),
 				request.getDescription(false));
-		return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
+		responseDTO.setErrorCode(ex.getMessage());
+		responseDTO.setData(errorDetails);
+		return new ResponseEntity<>(responseDTO, HttpStatus.BAD_REQUEST);
 	}
 
 	@ExceptionHandler(UpdateDataFailException.class)
@@ -43,6 +47,33 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(), ex.getMessage(),
 				request.getDescription(false));
 		return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
+	}
+	@ExceptionHandler(UserNameExistsException.class)
+	public ResponseEntity<?> userNameExistsException(UserNameExistsException ex, WebRequest request) {
+		ResponseDTO responseDTO = new ResponseDTO();
+		ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(), ex.getMessage(),
+				request.getDescription(false));
+		responseDTO.setErrorCode(ex.getMessage());
+		responseDTO.setData(errorDetails);
+		return new ResponseEntity<>(responseDTO, HttpStatus.BAD_REQUEST);
+	}
+	@ExceptionHandler(EmailExistsException.class)
+	public ResponseEntity<?> emailExistsException(EmailExistsException ex, WebRequest request) {
+		ResponseDTO responseDTO = new ResponseDTO();
+		ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(), ex.getMessage(),
+				request.getDescription(false));
+		responseDTO.setErrorCode(ex.getMessage());
+		responseDTO.setData(errorDetails);
+		return new ResponseEntity<>(responseDTO, HttpStatus.BAD_REQUEST);
+	}
+	@ExceptionHandler(LoadDataFailException.class)
+	public ResponseEntity<?> loadDataFailException(LoadDataFailException ex, WebRequest request) {
+		ResponseDTO responseDTO = new ResponseDTO();
+		ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(), ex.getMessage(),
+				request.getDescription(false));
+		responseDTO.setErrorCode(ex.getMessage());
+		responseDTO.setData(errorDetails);
+		return new ResponseEntity<>(responseDTO, HttpStatus.BAD_REQUEST);
 	}
 
 	@ExceptionHandler(Exception.class)

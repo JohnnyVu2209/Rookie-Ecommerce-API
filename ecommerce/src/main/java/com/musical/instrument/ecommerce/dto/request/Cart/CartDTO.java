@@ -11,5 +11,5 @@ import java.math.BigDecimal;
 @Data
 public class CartDTO {
     private int Quantity;
-    private Double amount;
+    private BigDecimal amount;
 }

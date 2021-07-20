@@ -44,12 +44,15 @@ public class ProductController {
 
 	@GetMapping("/")
 	@PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
-	public ResponseEntity<ResponseDTO> getListProduct() {
+	public ResponseEntity<ResponseDTO> getListProduct() throws Exception{
 		ResponseDTO response = new ResponseDTO();
-		response.setData(productService.ListProduct());
-		response.setSuccessCode("LOAD_LIST_SUCCESS");
+		try {
+			response.setData(productService.ListProduct());
+			response.setSuccessCode("LOAD_LIST_SUCCESS");
+		}catch (Exception e){
+			throw new DataNotFoundException(ErrorCode.ERR_UPDATE_PRODUCT_FAIL);
+		}
 		return ResponseEntity.ok().body(response);
-
 	}
 
 	@GetMapping("/{id}")
@@ -57,17 +60,12 @@ public class ProductController {
 		ResponseDTO response = new ResponseDTO();
 		try {
 			Product product = productRepository.findById(productId)
-											   .orElseGet(() -> {
-													response.setErrorCode("PRODUCT_NOT_FOUND");
-												  	throw new DataNotFoundException("PRODUCT_NOT_FOUND");
-											   });
+											   .orElseThrow(()->new DataNotFoundException(ErrorCode.ERR_PRODUCT_NOT_FOUND));
 				ProductDTO productDTO = productConvert.ToDto(product);
 				response.setData(productDTO);
-				response.setSuccessCode("PRODUCT_LOAD_SUCCESS");
+				response.setSuccessCode(SuccessCode.PRODUCT_LOAD_SUCCESS);
 		} catch (Exception e) {
-			// TODO: handle exception
-			response.setErrorCode("PRODUCT_LOAD_FAIL");
-			throw new DataNotFoundException("PRODUCT_LOAD_FAIL");
+			throw new DataNotFoundException(ErrorCode.ERR_PRODUCT_LOAD_FAIL);
 		}
 		return ok().body(response);
 	}
@@ -83,7 +81,7 @@ public class ProductController {
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			response.setErrorCode("CREATE_PRODUCT_FAIL");
-			throw new CreateDataFailException("CREATE_PRODUCT_FAIL");
+			throw new CreateDataFailException(ErrorCode.ERR_CREATE_PRODUCT_FAIL);
 		}
 		return ok().body(response);
 	}
@@ -96,11 +94,10 @@ public class ProductController {
 			Product product = productConvert.ToEntity(dto);
 			ProductDTO productDTO = productService.UpdateProduct(productId, product);
 			response.setData(productDTO);
-			response.setSuccessCode("UPDATE_PRODUCT_SUCCESS");
+			response.setSuccessCode(SuccessCode.UPDATE_PRODUCT_SUCCESS);
 		} catch (Exception e) {
 			// TODO: handle exception
-			response.setErrorCode("UPDATE_PRODUCT_FAIL");
-			throw new DataNotFoundException("UPDATE_PRODUCT_FAIL");
+			throw new DataNotFoundException(ErrorCode.ERR_UPDATE_PRODUCT_FAIL);
 		}
 		return ok().body(response);
 	}
@@ -110,11 +107,10 @@ public class ProductController {
 		ResponseDTO response = new ResponseDTO();
 		try {
 			boolean isDeleted = productService.DeleteProduct(productId);
-			response.setSuccessCode("PRODUCT_DELETED_SUCCESS");
+			response.setSuccessCode(SuccessCode.DELETE_PRODUCT_SUCCESS);
 		} catch (Exception e) {
 			// TODO: handle exception
-			response.setErrorCode("PRODUCT_DELETED_FAIL");
-			throw new DeleteDataFailException("PRODUCT_DELETED_FAIL");
+			throw new DeleteDataFailException(ErrorCode.ERR_PRODUCT_DELETED_FAIL);
 		}
 		return ok().body(response);
 	}

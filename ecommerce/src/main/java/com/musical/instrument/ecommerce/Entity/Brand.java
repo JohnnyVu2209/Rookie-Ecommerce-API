@@ -15,7 +15,9 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table (name = "brand")
+@Table (name = "brand", indexes = {
+		@Index(columnList = "brand_name" )
+})
 public class Brand {
 	
 	@Id
@@ -23,7 +25,7 @@ public class Brand {
 	@Column(name = "id_brand",nullable=false)
 	private Long id_brand;
 	
-	@NotBlank(message = "Vui lòng nhập tên thương hiệu")
+
 	@Column(name = "brand_name")
 	private String name;
 

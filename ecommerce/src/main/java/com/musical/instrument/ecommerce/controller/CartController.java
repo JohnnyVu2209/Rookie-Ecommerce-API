@@ -1,14 +1,20 @@
 package com.musical.instrument.ecommerce.controller;
 
 import com.musical.instrument.ecommerce.Entity.Account;
+import com.musical.instrument.ecommerce.Entity.CartItem;
 import com.musical.instrument.ecommerce.Entity.Product;
 import com.musical.instrument.ecommerce.dto.request.Cart.AddCartItemDTO;
 import com.musical.instrument.ecommerce.dto.request.Cart.CartDTO;
 import com.musical.instrument.ecommerce.dto.request.Cart.CartDetailDTO;
+import com.musical.instrument.ecommerce.dto.request.Cart.RemoveItemDTO;
+import com.musical.instrument.ecommerce.dto.response.ErrorCode;
 import com.musical.instrument.ecommerce.dto.response.ResponseDTO;
+import com.musical.instrument.ecommerce.dto.response.SuccessCode;
 import com.musical.instrument.ecommerce.exception.CreateDataFailException;
 import com.musical.instrument.ecommerce.exception.DataNotFoundException;
+import com.musical.instrument.ecommerce.exception.DeleteDataFailException;
 import com.musical.instrument.ecommerce.repositpory.AccountRepository;
+import com.musical.instrument.ecommerce.repositpory.CartItemRepository;
 import com.musical.instrument.ecommerce.repositpory.ProductRepository;
 import com.musical.instrument.ecommerce.service.CartService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +37,9 @@ public class CartController {
     private ProductRepository productRepository;
 
     @Autowired
+    private CartItemRepository cartItemRepository;
+
+    @Autowired
     private CartService cartService;
 
 
@@ -46,18 +55,18 @@ public class CartController {
         }else {
             responseDTO.setData("You have not add any item to cart");
         }
-        responseDTO.setSuccessCode("LOAD_CART_DETAIL_SUCCESS");
+        responseDTO.setSuccessCode(SuccessCode.LOAD_CART_DETAIL_SUCCESS);
         return ResponseEntity.ok().body(responseDTO);
     }
 
-    @PostMapping("/{id}")
+    @PostMapping("/")
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')" )
-    public ResponseEntity<ResponseDTO> AddItem(@PathVariable("id") Long productId, @Valid @RequestBody AddCartItemDTO itemDTO)
+    public ResponseEntity<ResponseDTO> AddItem(@Valid @RequestBody AddCartItemDTO itemDTO)
     throws CreateDataFailException {
         ResponseDTO responseDTO = new ResponseDTO();
         try {
-            Product product = productRepository.findById(productId)
-                                               .orElseThrow(() -> new DataNotFoundException("PRODUCT_NOT_FOUND"));
+            Product product = productRepository.findById(itemDTO.getId())
+                                               .orElseThrow(() -> new DataNotFoundException(ErrorCode.ERR_PRODUCT_NOT_FOUND));
             Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             String username = ((UserDetails)principal).getUsername();
             Account account = accountRepository.findByUsername(username).get();
@@ -65,12 +74,30 @@ public class CartController {
             CartDTO cartDTO = cartService.AddItemToCart(account.getId(),product,itemDTO.getQuantity());
 
             responseDTO.setData(cartDTO);
-            responseDTO.setSuccessCode("ADD_ITEM_SUCCESS");
+            responseDTO.setSuccessCode(SuccessCode.ADD_ITEM_SUCCESS);
         }catch (Exception e){
-            responseDTO.setErrorCode("ADD_ITEM_FAIL");
-            throw new CreateDataFailException(e.getMessage());
+            throw new CreateDataFailException(ErrorCode.ERR_ADD_ITEM_FAIL);
         }
 
+        return ResponseEntity.ok().body(responseDTO);
+    }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ResponseDTO> RemoveItem(@PathVariable("id") Long productId) throws DeleteDataFailException {
+        ResponseDTO responseDTO = new ResponseDTO();
+        try {
+            Product product = productRepository.findById(productId)
+                                               .orElseThrow(()-> new DataNotFoundException(ErrorCode.ERR_PRODUCT_NOT_FOUND));
+            Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            String username = ((UserDetails)principal).getUsername();
+            Account account = accountRepository.findByUsername(username).get();
+            CartItem cartItem = cartItemRepository.findByProduct(product)
+                                                .orElseThrow(() -> new DataNotFoundException(ErrorCode.ERR_ITEM_NOT_EXIST_IN_CART));
+            CartDTO cartDTO = cartService.RemoveItemFromCart(account.getId(), cartItem);
+            responseDTO.setData(cartDTO);
+            responseDTO.setSuccessCode(SuccessCode.REMOVE_ITEM_SUCCESS);
+        }catch (Exception e){
+            throw new DeleteDataFailException(ErrorCode.ERR_REMOVE_ITEM_FAIL);
+        }
         return ResponseEntity.ok().body(responseDTO);
     }
 

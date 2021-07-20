@@ -4,17 +4,23 @@ import java.util.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 @Entity
 @Getter
 @Setter
 @AllArgsConstructor
-@Table(name = "category")
+@Table(name = "category", indexes = {
+		@Index(columnList = "category_name"),
+		@Index(name = "cate_parent",columnList = "category_parent" )
+})
 public class Category {
 
 	@Id
@@ -22,13 +28,17 @@ public class Category {
 	@Column(name = "id_category", nullable = false)
 	private Long id;
 
-	@NotBlank(message = "Vui lòng nhập tên danh mục")
+	@NotNull
 	@Column(name = "category_name")
 	private String name;
 
+	@CreationTimestamp
+	@Temporal(TemporalType.DATE)
 	@Column(name ="create_date")
 	private Date creatDate;
 
+	@UpdateTimestamp
+	@Temporal(TemporalType.DATE)
 	@Column(name ="update_date")
 	private Date updateDate;
 

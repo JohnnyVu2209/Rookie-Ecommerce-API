@@ -12,7 +12,11 @@ import java.math.BigDecimal;
 @Setter
 @NoArgsConstructor
 @Entity
-@Table(name = "cart_item")
+@Table(name = "cart_item", indexes = {
+        @Index(name = "item_pr_qtt", columnList = "id_product ,quantity"),
+        @Index(name = "item_prc", columnList = "price"),
+        @Index(name = "cart_item", columnList = "id_cart")
+})
 public class CartItem {
 
     @Id

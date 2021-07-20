@@ -1,5 +1,9 @@
 package com.musical.instrument.ecommerce.convert;
 
+import com.musical.instrument.ecommerce.Entity.Brand;
+import com.musical.instrument.ecommerce.Entity.Category;
+import com.musical.instrument.ecommerce.dto.response.ErrorCode;
+import com.musical.instrument.ecommerce.exception.DataNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.expression.ParseException;
@@ -32,15 +36,23 @@ public class ProductConvert {
 
 	public Product ToEntity(CreateProductDTO createProductDTO) {
 		Product product = mapper.map(createProductDTO, Product.class);
-		product.setCategory(categoryRepository.findById(createProductDTO.getId_category()).get());
-		product.setBrand(brandRepository.findById(createProductDTO.getId_brand()).get());
+		Category category = categoryRepository.findById(createProductDTO.getId_category())
+											  .orElseThrow(()-> new DataNotFoundException(ErrorCode.ERR_CATEGORY_NOT_FOUND));
+		Brand brand = brandRepository.findById(createProductDTO.getId_brand())
+				.orElseThrow(() -> new DataNotFoundException(ErrorCode.ERR_BRAND_NOT_FOUND));
+		product.setCategory(category);
+		product.setBrand(brand);
 		return product;
 	}
 
 	public Product ToEntity(UpdateProductDTO updateProductDTO) {
 		Product product = mapper.map(updateProductDTO, Product.class);
-		product.setCategory(categoryRepository.findById(updateProductDTO.getId_category()).get());
-		product.setBrand(brandRepository.findById(updateProductDTO.getId_brand()).get());
+		Category category = categoryRepository.findById(updateProductDTO.getId_category())
+											  .orElseThrow(()-> new DataNotFoundException(ErrorCode.ERR_CATEGORY_NOT_FOUND));
+		Brand brand = brandRepository.findById(updateProductDTO.getId_brand())
+									 .orElseThrow(() -> new DataNotFoundException(ErrorCode.ERR_BRAND_NOT_FOUND));
+		product.setCategory(category);
+		product.setBrand(brand);
 		return product;
 	}
 }

@@ -25,6 +25,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -60,8 +61,12 @@ public class CartServiceTest {
         account.get().setId(1L);
         Optional<Cart> cart = Optional.ofNullable(null);
         Cart testCart = new Cart(account.get());
-        CartDetailDTO cartDetailDTO = new CartDetailDTO(testCart.getCartItems(),testCart.getQuantity(),
-                testCart.getAmount());
+
+        CartDetailDTO cartDetailDTO = new CartDetailDTO(testCart.getCartItems()
+                                                                .stream()
+                                                                .map(entity-> cartConvert.toCartItemDTO(entity))
+                                                                .collect(Collectors.toList()),testCart.getQuantity(),
+                                                                BigDecimal.valueOf(testCart.getAmount()));
 
         when(cartRepository.findById(anyLong())).thenReturn(cart);
         when(accountRepository.findById(anyLong())).thenReturn(account);
@@ -105,7 +110,7 @@ public class CartServiceTest {
         testCart.setAmount(cartItems.stream()
                                     .map(CartItem::getAmount)
                                     .reduce((double) 0, (a, b) -> a + b));
-        CartDTO cartDTO = new CartDTO(testCart.getQuantity(),testCart.getAmount());
+        CartDTO cartDTO = new CartDTO(testCart.getQuantity(),new BigDecimal(testCart.getAmount()));
 
         when(cartRepository.save(any(Cart.class))).thenReturn(testCart);
         when(cartConvert.toDto(any(Cart.class))).thenReturn(cartDTO);
@@ -113,7 +118,7 @@ public class CartServiceTest {
         CartDTO dto = cartServiceMock.AddItemToCart(1L,product, 5);
 
         assertEquals(5, dto.getQuantity());
-        assertEquals(new BigDecimal(500000),dto.getAmount());
+        assertEquals(new BigDecimal(500000.0),dto.getAmount());
     }
 
     @Test
@@ -145,7 +150,7 @@ public class CartServiceTest {
         Cart resultCart = testCart;
         resultCart.setQuantity(0);
         resultCart.setAmount((double) 0);
-        CartDTO cartDTO = new CartDTO(0, (double) 0);
+        CartDTO cartDTO = new CartDTO(0,  BigDecimal.ZERO);
 
         when(cartRepository.findById(anyLong())).thenReturn(Optional.of(testCart));
         when(cartRepository.save(any(Cart.class))).thenReturn(resultCart);

@@ -2,6 +2,7 @@ package com.musical.instrument.ecommerce.service.Impl;
 
 import java.util.Date;
 
+import com.musical.instrument.ecommerce.dto.response.ErrorCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -52,31 +53,32 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ProductDTO CreateProduct(Product product) throws CreateDataFailException {
         // TODO Auto-generated method stub
+        ProductDTO productDTO = new ProductDTO();
         try {
-            ProductDTO productDTO = convert.ToDto(repository.save(product));
-            return productDTO;
-        } catch (Exception e) {
-            throw new CreateDataFailException("PRODUCT_CREATE_FAIL");
+             Product product1 = repository.save(product);
+             productDTO = convert.ToDto(product1);
+        }catch (Exception e){
+            throw new CreateDataFailException(ErrorCode.ERR_CREATE_PRODUCT_FAIL);
         }
+        return productDTO;
     }
 
     @Override
     public ProductDTO UpdateProduct(Long productId, Product product) throws UpdateDataFailException {
         // TODO Auto-generated method stub
         Product oldProduct = repository.findById(productId)
-                .orElseThrow(() -> new DataNotFoundException("PRODUCT_NOT_FOUND"));
+                .orElseThrow(() -> new DataNotFoundException(ErrorCode.ERR_PRODUCT_NOT_FOUND));
         try {
             oldProduct.setName(product.getName());
             oldProduct.setDescription(product.getDescription());
             oldProduct.setPrice(product.getPrice());
             oldProduct.setQuantity(product.getQuantity());
-            oldProduct.setUpdate_date(new Date());
             oldProduct.setBrand(product.getBrand());
             oldProduct.setCategory(product.getCategory());
             return convert.ToDto(repository.save(oldProduct));
         } catch (Exception e) {
             // TODO: handle exception
-            throw new UpdateDataFailException("PRODUCT_UPDATED_FAIL");
+            throw new UpdateDataFailException(ErrorCode.ERR_UPDATE_PRODUCT_FAIL);
         }
     }
 
@@ -84,7 +86,7 @@ public class ProductServiceImpl implements ProductService {
     public Boolean DeleteProduct(Long productId) throws DeleteDataFailException {
         // TODO Auto-generated method stub
         Product product = repository.findById(productId)
-                .orElseThrow(() -> new DataNotFoundException("PRODUCT_NOT_FOUND"));
+                .orElseThrow(() -> new DataNotFoundException(ErrorCode.ERR_PRODUCT_NOT_FOUND));
         product.setIsDeleted(true);
         repository.save(product);
         return product.getIsDeleted();

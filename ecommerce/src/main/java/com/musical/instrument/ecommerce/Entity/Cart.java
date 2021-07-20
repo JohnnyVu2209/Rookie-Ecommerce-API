@@ -17,7 +17,10 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @Entity
-@Table(name = "cart")
+@Table(name = "cart",indexes = {
+        @Index(name = "cart_quantity", columnList = "quantity"),
+        @Index(name = "cart_amount", columnList = "amount")
+})
 public class Cart {
 
     @Id
@@ -41,6 +44,7 @@ public class Cart {
     private Double amount;
 
     @OneToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+    @MapsId
     @JoinColumn(name = "id_cart")
     private Account account;
 

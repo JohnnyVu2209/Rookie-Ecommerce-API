@@ -7,6 +7,7 @@ import java.util.List;
 import javax.persistence.*;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import lombok.AllArgsConstructor;
@@ -18,7 +19,12 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @Entity
-@Table(name = "product")
+@Table(name = "product", indexes = {
+					@Index(columnList = "product_name"),
+					@Index(name = "pd_price", columnList = "price"),
+					@Index(name = "pd_cate", columnList = "id_category"),
+					@Index(name = "pd_brand", columnList = "id_brand")
+})
 public class Product {
 
 	@Id
@@ -26,15 +32,19 @@ public class Product {
 	@Column(name = "id_product", nullable = false)
 	private Long id;
 
+	@Size(max = 100)
+	@NotNull
 	@Column(name = "product_name")
 	private String name;
 
 	@Column(name = "description")
 	private String description;
 
+	@NotNull
 	@Column(name = "quantity")
 	private int quantity;
 
+	@NotNull
 	@Column(name = "price")
 	private Double price;
 

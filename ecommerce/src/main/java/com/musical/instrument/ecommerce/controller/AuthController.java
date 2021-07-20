@@ -1,6 +1,8 @@
 package com.musical.instrument.ecommerce.controller;
 
 import com.musical.instrument.ecommerce.dto.response.ResponseDTO;
+import com.musical.instrument.ecommerce.dto.response.SuccessCode;
+import com.musical.instrument.ecommerce.exception.CreateDataFailException;
 import com.musical.instrument.ecommerce.payload.request.LoginRequest;
 import com.musical.instrument.ecommerce.payload.request.SignUpRequest;
 import com.musical.instrument.ecommerce.payload.response.JwtResponse;
@@ -23,12 +25,16 @@ public class AuthController {
 
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest request){
+        ResponseDTO responseDTO = new ResponseDTO();
         JwtResponse response = authService.SignIn(request);
-        return ResponseEntity.ok().body(response);
+        responseDTO.setData(response);
+        responseDTO.setSuccessCode(SuccessCode.SIGN_IN_SUCCESS);
+        return ResponseEntity.ok().body(responseDTO);
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<ResponseDTO> registerUser(@Valid @RequestBody SignUpRequest request){
+    public ResponseEntity<ResponseDTO> registerUser(@Valid @RequestBody SignUpRequest request)
+            throws CreateDataFailException {
         ResponseDTO response = authService.SignUp(request);
         return ResponseEntity.ok().body(response);
     }

@@ -28,5 +28,4 @@ public class SignUpRequest {
     @NotBlank(message = "Password cannot be blank")
     String password;
 
-    private Set<String> roles;
 }

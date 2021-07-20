@@ -15,6 +15,9 @@ import java.util.Set;
 @AllArgsConstructor
 @Data
 public class CategoryDTO {
+
+	@NotBlank(message = "Category name cannot be blank")
 	private String Category_name;
+
 	private Set<ProductDTO> products = new HashSet<>();
 }

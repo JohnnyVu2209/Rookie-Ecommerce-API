@@ -14,6 +14,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 public class BrandDTO {
+	@NotBlank(message = "Brand name cannot be blank")
 	private String brand_name;
 	private Set<Product> products;
 }

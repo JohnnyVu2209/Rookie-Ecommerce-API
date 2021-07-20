@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.lang.Nullable;
 
 import javax.persistence.*;
@@ -19,7 +21,11 @@ import java.util.*;
 @Entity
 @Table(name = "account",uniqueConstraints = {
         @UniqueConstraint(columnNames = "username"),
-        @UniqueConstraint(columnNames = "email") })
+        @UniqueConstraint(columnNames = "email") }
+    ,indexes = {
+        @Index(name = "acc_email_pass",columnList = "email, password"),
+        @Index(columnList = "username")
+    })
 public class Account {
 
     @Id
@@ -43,6 +49,7 @@ public class Account {
     @Column(name = "sex")
     private Boolean sex;
 
+    @Size(max = 15)
     @Column(name = "phone")
     private String phone;
 
@@ -51,10 +58,12 @@ public class Account {
     @Column(name = "email")
     private String email;
 
+    @CreationTimestamp
     @Temporal(TemporalType.DATE)
     @Column(name = "create_date")
     private Date createDate;
 
+    @UpdateTimestamp
     @Temporal(TemporalType.DATE)
     @Column(name = "update_date")
     private Date updateDate;

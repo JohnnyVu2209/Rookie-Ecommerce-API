@@ -4,8 +4,13 @@ import com.musical.instrument.ecommerce.Entity.Account;
 import com.musical.instrument.ecommerce.Entity.Cart;
 import com.musical.instrument.ecommerce.Entity.ERole;
 import com.musical.instrument.ecommerce.Entity.Role;
+import com.musical.instrument.ecommerce.dto.response.ErrorCode;
 import com.musical.instrument.ecommerce.dto.response.ResponseDTO;
+import com.musical.instrument.ecommerce.dto.response.SuccessCode;
+import com.musical.instrument.ecommerce.exception.CreateDataFailException;
 import com.musical.instrument.ecommerce.exception.DataNotFoundException;
+import com.musical.instrument.ecommerce.exception.EmailExistsException;
+import com.musical.instrument.ecommerce.exception.UserNameExistsException;
 import com.musical.instrument.ecommerce.payload.request.LoginRequest;
 import com.musical.instrument.ecommerce.payload.request.SignUpRequest;
 import com.musical.instrument.ecommerce.payload.response.JwtResponse;
@@ -42,7 +47,6 @@ public class AuthServiceImpl implements AuthService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-
     @Autowired
     private RoleRepository roleRepository;
 
@@ -66,46 +70,31 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public ResponseDTO SignUp(SignUpRequest signUpRequest) {
+    public ResponseDTO SignUp(SignUpRequest signUpRequest) throws CreateDataFailException {
         ResponseDTO response = new ResponseDTO();
-        if(accountRepository.existsByUsername(signUpRequest.getUsername())){
-            response.setErrorCode("USERNAME_ALREADY_TAKEN");
-            return response;
-        }
-        if(accountRepository.existsByEmail(signUpRequest.getEmail())){
-            response.setErrorCode("EMAIL_ALREADY_TAKEN");
-            return response;
-        }
+        try {
+            if(accountRepository.existsByUsername(signUpRequest.getUsername())){
+                throw new UserNameExistsException(ErrorCode.ERR_USERNAME_ALREADY_TAKEN);
+            }
+            if(accountRepository.existsByEmail(signUpRequest.getEmail())){
+                throw new EmailExistsException(ErrorCode.ERR_EMAIL_ALREADY_TAKEN);
+            }
 
-        Account account = new Account(signUpRequest.getUsername(),
-                passwordEncoder.encode(signUpRequest.getPassword()),
-                signUpRequest.getEmail());
-        Set<String> strRoles = signUpRequest.getRoles();
-        Set<Role> roles = new HashSet<>();
-
-        if(strRoles == null){
+            Account account = new Account(signUpRequest.getUsername(),
+                    passwordEncoder.encode(signUpRequest.getPassword()),
+                    signUpRequest.getEmail());
+            Set<Role> roles = new HashSet<>();
             Role userRole = roleRepository.findByRole(ERole.ROLE_USER).
-                    orElseThrow(() -> new DataNotFoundException("ROLE_NOT_FOUND"));
+                    orElseThrow(() -> new DataNotFoundException(ErrorCode.ERR_ROLE_NOT_FOUND));
             roles.add(userRole);
-        }else {
-            strRoles.forEach(role ->{
-                switch (role){
-                    case "admin":
-                        Role adminRole = roleRepository.findByRole(ERole.ROLE_ADMIN)
-                                                       .orElseThrow(() -> new DataNotFoundException("ROLE_NOT_FOUND"));
-                        roles.add(adminRole);
-                        break;
-                    default:
-                        Role userRole = roleRepository.findByRole(ERole.ROLE_USER).
-                                orElseThrow(() -> new DataNotFoundException("ROLE_NOT_FOUND"));
-                        roles.add(userRole);
-                }
-            });
+            account.setRoles(roles);
+            account.setCreateDate(new Date());
+            accountRepository.save(account);
+            response.setSuccessCode(SuccessCode.SIGN_UP_SUCCESS);
+        }catch (Exception e){
+            throw new CreateDataFailException(ErrorCode.ERR_SIGN_UP_FAIL);
         }
-        account.setRoles(roles);
-        account.setCreateDate(new Date());
-        accountRepository.save(account);
-        response.setSuccessCode("USER_SIGN_UP_SUCCESS");
+
         return response;
     }
 }
