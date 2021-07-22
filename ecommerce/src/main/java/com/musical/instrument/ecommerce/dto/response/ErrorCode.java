@@ -2,7 +2,7 @@ package com.musical.instrument.ecommerce.dto.response;
 
 public class ErrorCode {
     //Product
-    public static final String ERR_LOAD_LIST_FAIL = "LOAD_LIST_FAIL";
+    public static final String ERR_PRODUCT_LIST_LOAD_FAIL = "PRODUCT_LIST_LOAD_FAIL";
     public static final String ERR_PRODUCT_LOAD_FAIL = "PRODUCT_LOAD_FAIL";
     public static final String ERR_PRODUCT_NOT_FOUND = "PRODUCT_NOT_FOUND";
     public static final String ERR_CREATE_PRODUCT_FAIL = "CREATE_PRODUCT_FAIL";
@@ -10,7 +10,12 @@ public class ErrorCode {
     public static final String ERR_PRODUCT_DELETED_FAIL = "DELETE_PRODUCT_FAIL";
 
     //Category
+    public static final String ERR_CATEGORY_LIST_LOAD_FAIL = "CATEGORY_LIST_LOAD_FAIL";
     public static final String ERR_CATEGORY_NOT_FOUND = "CATEGORY_NOT_FOUND";
+    public static final String ERR_CATEGORY_ALREADY_EXISTS = "CATEGORY_ALREADY_EXISTS";
+    public static final String ERR_CREATE_CATEGORY_FAIL = "CREATE_CATEGORY_FAIL";
+    public static final String ERR_UPDATE_CATEGORY_FAIL = "UPDATE_CATEGORY_FAIL";
+    public static final String ERR_DELETE_CATEGORY_FAIL = "DELETE_CATEGORY_FAIL";
 
     //Brand
     public static final String ERR_BRAND_NOT_FOUND = "BRAND_NOT_FOUND";

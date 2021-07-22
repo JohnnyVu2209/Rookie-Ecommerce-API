@@ -38,7 +38,7 @@ public class ProductRepositoryTest {
         product.setPrice(10000000.0);
         Brand brand = brandRepository.findByName("Fender");
         product.setBrand(brand);
-        Category category = categoryRepository.findByName("Aucostic Guitar");
+        Category category = categoryRepository.findByName("Aucostic Guitar").get();
         product.setCategory(category);
         assertNotNull(productRepository.save(product));
     }

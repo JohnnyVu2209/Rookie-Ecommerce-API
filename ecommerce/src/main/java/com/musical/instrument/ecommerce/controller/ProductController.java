@@ -10,14 +10,7 @@ import com.musical.instrument.ecommerce.dto.request.Product.UpdateProductDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.musical.instrument.ecommerce.Entity.Product;
 import com.musical.instrument.ecommerce.convert.ProductConvert;
@@ -42,15 +35,18 @@ public class ProductController {
 	@Autowired
 	private ProductRepository productRepository;
 
-	@GetMapping("/")
+	@GetMapping("/page/{PageNo}")
 	@PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
-	public ResponseEntity<ResponseDTO> getListProduct() throws Exception{
+	public ResponseEntity<ResponseDTO> getListProduct(@PathVariable("PageNo") int pageNo,
+													 @RequestParam("sortField") String sortField,
+													@RequestParam("sortDir") String sortDir) throws Exception{
 		ResponseDTO response = new ResponseDTO();
 		try {
-			response.setData(productService.ListProduct());
-			response.setSuccessCode("LOAD_LIST_SUCCESS");
+			int pageSize = 5;
+			response.setData(productService.ListProduct(pageNo,pageSize,sortField,sortDir));
+			response.setSuccessCode(SuccessCode.PRODUCT_LIST_LOAD_SUCCESS);
 		}catch (Exception e){
-			throw new DataNotFoundException(ErrorCode.ERR_UPDATE_PRODUCT_FAIL);
+			throw new LoadDataFailException(ErrorCode.ERR_PRODUCT_LIST_LOAD_FAIL);
 		}
 		return ResponseEntity.ok().body(response);
 	}
@@ -77,10 +73,9 @@ public class ProductController {
 		try {
 			ProductDTO productDTO = productService.CreateProduct(productConvert.ToEntity(dto));
 			response.setData(productDTO);
-			response.setSuccessCode("CREATE_PRODUCT_SUCCESS");
+			response.setSuccessCode(SuccessCode.CREATE_PRODUCT_SUCCESS);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			response.setErrorCode("CREATE_PRODUCT_FAIL");
 			throw new CreateDataFailException(ErrorCode.ERR_CREATE_PRODUCT_FAIL);
 		}
 		return ok().body(response);

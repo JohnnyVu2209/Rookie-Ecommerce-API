@@ -1,7 +1,6 @@
 package com.musical.instrument.ecommerce.service.Impl;
 
 import com.musical.instrument.ecommerce.Entity.Account;
-import com.musical.instrument.ecommerce.Entity.Cart;
 import com.musical.instrument.ecommerce.Entity.ERole;
 import com.musical.instrument.ecommerce.Entity.Role;
 import com.musical.instrument.ecommerce.dto.response.ErrorCode;
@@ -9,8 +8,7 @@ import com.musical.instrument.ecommerce.dto.response.ResponseDTO;
 import com.musical.instrument.ecommerce.dto.response.SuccessCode;
 import com.musical.instrument.ecommerce.exception.CreateDataFailException;
 import com.musical.instrument.ecommerce.exception.DataNotFoundException;
-import com.musical.instrument.ecommerce.exception.EmailExistsException;
-import com.musical.instrument.ecommerce.exception.UserNameExistsException;
+import com.musical.instrument.ecommerce.exception.DuplicateException;
 import com.musical.instrument.ecommerce.payload.request.LoginRequest;
 import com.musical.instrument.ecommerce.payload.request.SignUpRequest;
 import com.musical.instrument.ecommerce.payload.response.JwtResponse;
@@ -74,10 +72,10 @@ public class AuthServiceImpl implements AuthService {
         ResponseDTO response = new ResponseDTO();
         try {
             if(accountRepository.existsByUsername(signUpRequest.getUsername())){
-                throw new UserNameExistsException(ErrorCode.ERR_USERNAME_ALREADY_TAKEN);
+                throw new DuplicateException(ErrorCode.ERR_USERNAME_ALREADY_TAKEN);
             }
             if(accountRepository.existsByEmail(signUpRequest.getEmail())){
-                throw new EmailExistsException(ErrorCode.ERR_EMAIL_ALREADY_TAKEN);
+                throw new DuplicateException(ErrorCode.ERR_EMAIL_ALREADY_TAKEN);
             }
 
             Account account = new Account(signUpRequest.getUsername(),

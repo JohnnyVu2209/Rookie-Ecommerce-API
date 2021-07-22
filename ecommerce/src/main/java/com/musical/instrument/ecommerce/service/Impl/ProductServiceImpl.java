@@ -6,6 +6,7 @@ import com.musical.instrument.ecommerce.dto.response.ErrorCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -33,11 +34,13 @@ public class ProductServiceImpl implements ProductService {
     @Autowired
     private ProductConvert convert;
 
+
     @Override
-    public Page<ProductDTO> ListProduct() {
-        // TODO Auto-generated method stub
-        PageRequest pageRequest = PageRequest.of(0, 2, Sort.by("name").descending());
-        Page<Product> products = repository.findAll(pageRequest);
+    public Page<ProductDTO> ListProduct(int pageNo, int pageSize, String sortField, String sortDir) {
+        Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortField).ascending() :
+                Sort.by(sortField).descending();
+        Pageable pageable = PageRequest.of(pageNo - 1, pageSize, sort);
+        Page<Product> products = repository.findAll(pageable);
         return products.map(product -> convert.ToDto(product));
     }
 

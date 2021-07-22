@@ -35,7 +35,7 @@ public class Category {
 	@CreationTimestamp
 	@Temporal(TemporalType.DATE)
 	@Column(name ="create_date")
-	private Date creatDate;
+	private Date createDate;
 
 	@UpdateTimestamp
 	@Temporal(TemporalType.DATE)
@@ -50,13 +50,13 @@ public class Category {
 	private Category parent;
 
 	@OneToMany(fetch = FetchType.LAZY,mappedBy = "parent")
-	private List<Category> subCategories = new ArrayList<>();
+	private Set<Category> subCategories = new HashSet<>();
 
 	@OneToMany(fetch = FetchType.LAZY,mappedBy = "category")
-	private List<Product> products;
+	private Set<Product> products = new HashSet<>();
 
 	public Category(){
-		this.setCreatDate(new Date());
+		this.setCreateDate(new Date());
 		this.setIsDeleted(false);
 	}
 }

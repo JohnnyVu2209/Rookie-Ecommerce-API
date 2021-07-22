@@ -9,7 +9,7 @@ import com.musical.instrument.ecommerce.exception.*;
 
 
 public interface ProductService {
-	public Page<ProductDTO> ListProduct();
+	public Page<ProductDTO> ListProduct(int PageNo, int pageSize, String sortField, String sortDir);
 
 	public Page<ProductDTO> FindProductByCategory(Long cateId);
 
